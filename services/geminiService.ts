@@ -2,19 +2,30 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { marked } from 'marked';
 import { AppResponse, Source, Stage } from "../types";
 
-// Per guidelines, assume API_KEY is available in process.env
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+/**
+ * Google Generative AI client instance
+ * Initialized with API key from environment variables
+ */
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
+/** Model configuration for different processing stages */
 const ROUTER_MODEL = 'gemini-2.5-flash';
 const GENERATION_MODEL_SEARCH = 'gemini-2.5-flash';
 const GENERATION_MODEL_GENERAL = 'gemini-2.5-flash';
 const VALIDATION_MODEL = 'gemini-2.5-flash';
 
-// Simple in-memory rate limiter for simulation
+/**
+ * Simple in-memory rate limiter for API protection
+ * Prevents abuse by limiting requests per time window
+ */
 const rateLimiter = {
     requests: [] as number[],
     windowMs: 60000, // 1 minute
     maxRequests: 10, // Allow more requests for demo purposes
+    /**
+     * Check if the current request should be rate limited
+     * @returns {boolean} True if rate limited, false otherwise
+     */
     isRateLimited: (): boolean => {
         const now = Date.now();
         rateLimiter.requests = rateLimiter.requests.filter(timestamp => now - timestamp < rateLimiter.windowMs);
@@ -26,6 +37,7 @@ const rateLimiter = {
     }
 };
 
+/** Regular expressions for detecting potential prompt injection attacks */
 const PROMPT_INJECTION_PATTERNS = [
     /ignore previous instructions/i,
     /disregard all prior directives/i,
@@ -34,14 +46,21 @@ const PROMPT_INJECTION_PATTERNS = [
     /act as/i,
 ];
 
+/** Regular expressions for detecting personally identifiable information (PII) */
 const PII_PATTERNS = [
     /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/, // Email
     /\b(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/, // Phone number
 ];
 
+/**
+ * Utility function to simulate processing delay
+ * @param {number} ms - Milliseconds to sleep
+ * @returns {Promise<void>}
+ */
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 
+/** Schema for router agent decision responses */
 const routerSchema = {
     type: Type.OBJECT,
     properties: {
@@ -58,6 +77,7 @@ const routerSchema = {
     required: ["agent", "reasoning"]
 };
 
+/** Schema for response validation and confidence scoring */
 const validationSchema = {
     type: Type.OBJECT,
     properties: {
@@ -73,6 +93,23 @@ const validationSchema = {
     required: ["confidence", "critique"]
 };
 
+/**
+ * Main query processing function that orchestrates the multi-agent RAG pipeline
+ *
+ * @param {string} query - The user's input query to process
+ * @param {Function} updateState - Callback function to update UI state during processing
+ * @returns {Promise<AppResponse>} The final processed response with confidence score and sources
+ *
+ * @throws {Error} When rate limited, PII detected, prompt injection detected, or processing fails
+ *
+ * Processing pipeline:
+ * 1. Security Layer - Rate limiting, PII detection, prompt injection protection
+ * 2. Intelligent Routing - Determines which agent should handle the query
+ * 3. Search & Grounding - Retrieves up-to-date information if needed
+ * 4. Draft Generation - Creates initial response
+ * 5. Refinement - Improves clarity and accuracy
+ * 6. Validation - Provides confidence scoring and quality assessment
+ */
 export const processQuery = async (
     query: string,
     updateState: (update: { stage: Stage, agent?: string, response?: Partial<AppResponse>, error?: string }) => void
@@ -112,7 +149,11 @@ export const processQuery = async (
 
         let routeResult;
         try {
-            routeResult = JSON.parse(routerResponse.text);
+            const responseText = routerResponse.text;
+            if (!responseText) {
+                throw new Error("No response text received from router model");
+            }
+            routeResult = JSON.parse(responseText);
         } catch (e) {
             console.error("Failed to parse router response:", routerResponse.text);
             throw new Error("The model returned an invalid routing decision. Please try again.");
@@ -134,7 +175,7 @@ export const processQuery = async (
                 }
             });
             
-            generatedText = searchResponse.text;
+            generatedText = searchResponse.text || "";
 
             if (searchResponse.candidates?.[0]?.groundingMetadata?.groundingChunks) {
                 sources = searchResponse.candidates[0].groundingMetadata.groundingChunks
@@ -152,7 +193,7 @@ export const processQuery = async (
                 model: GENERATION_MODEL_GENERAL,
                 contents: query,
             });
-            generatedText = generalResponse.text;
+            generatedText = generalResponse.text || "";
         }
 
         // Stage 3: Drafting
@@ -186,7 +227,7 @@ export const processQuery = async (
             contents: refinementPrompt,
         });
 
-        const refinedText = refinementResponse.text;
+        const refinedText = refinementResponse.text || draftText;
         
         // Stage 5: Validation
         updateState({ stage: Stage.Validating, response: { text: refinedText } });
@@ -203,14 +244,18 @@ export const processQuery = async (
 
         let validationResult;
         try {
-            validationResult = JSON.parse(validationResponse.text);
+            const validationResponseText = validationResponse.text;
+            if (!validationResponseText) {
+                throw new Error("No response text received from validation model");
+            }
+            validationResult = JSON.parse(validationResponseText);
         } catch(e) {
             console.error("Failed to parse validation response:", validationResponse.text);
             throw new Error("The model returned an invalid validation response. Please try again.");
         }
         const confidence = validationResult.confidence;
         
-        const htmlText = await marked.parse(refinedText);
+        const htmlText = await marked.parse(refinedText) || refinedText;
 
         const finalResponse: AppResponse = {
             text: htmlText,

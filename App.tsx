@@ -2,10 +2,13 @@ import React, { useState, useCallback } from 'react';
 import { QueryInput } from './components/QueryInput';
 import { ResponseDisplay } from './components/ResponseDisplay';
 import { ArchitectureVisualizer } from './components/ArchitectureVisualizer';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { Logo } from './components/icons';
 import { ProcessingState, Stage, AppResponse } from './types';
 import { processQuery } from './services/geminiService';
+import './index.css';
 
+/** Initial state for the processing pipeline */
 const initialState: ProcessingState = {
     stage: Stage.Idle,
     response: null,
@@ -15,13 +18,27 @@ const initialState: ProcessingState = {
     lastActiveStageOnError: null,
 };
 
+/**
+ * Main application component for the Multi-Agent RAG System
+ *
+ * Manages the overall application state and orchestrates the interaction
+ * between the query input, processing visualization, and response display.
+ */
 const App: React.FC = () => {
     const [processingState, setProcessingState] = useState<ProcessingState>(initialState);
 
+    /**
+     * Resets the processing state to initial values
+     * Used when user wants to start a new query
+     */
     const handleReset = useCallback(() => {
         setProcessingState(initialState);
     }, []);
-    
+
+    /**
+     * Handles query submission and manages the processing pipeline
+     * @param {string} query - The user's input query to process
+     */
     const handleSubmit = async (query: string) => {
         setProcessingState({ ...initialState, stage: Stage.Sanitization });
         
@@ -50,29 +67,37 @@ const App: React.FC = () => {
     const isLoading = processingState.stage !== Stage.Idle && processingState.stage !== Stage.Complete && processingState.stage !== Stage.Error;
 
     return (
-        <div className="bg-base-100 min-h-screen text-content-100 font-sans">
-            <header className="p-4 border-b border-base-300">
-                <div className="container mx-auto flex items-center gap-4">
-                    <Logo className="w-8 h-8 text-brand-primary" />
-                    <h1 className="text-2xl font-bold">AI Agentic Search</h1>
-                </div>
-            </header>
-            <main className="container mx-auto p-4 lg:p-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="space-y-8">
-                        <QueryInput onSubmit={handleSubmit} isLoading={isLoading} />
-                        <ArchitectureVisualizer 
-                            stage={processingState.stage} 
-                            agent={processingState.agent} 
-                            lastActiveStageOnError={processingState.lastActiveStageOnError}
-                        />
+        <ErrorBoundary>
+            <div className="bg-base-100 min-h-screen text-content-100 font-sans">
+                <header className="p-4 border-b border-base-300">
+                    <div className="container mx-auto flex items-center gap-4">
+                        <Logo className="w-8 h-8 text-brand-primary" />
+                        <h1 className="text-2xl font-bold">AI Agentic Search</h1>
                     </div>
-                    <div>
-                        <ResponseDisplay state={processingState} onReset={handleReset} />
+                </header>
+                <main className="container mx-auto p-4 lg:p-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div className="space-y-8">
+                            <ErrorBoundary>
+                                <QueryInput onSubmit={handleSubmit} isLoading={isLoading} />
+                            </ErrorBoundary>
+                            <ErrorBoundary>
+                                <ArchitectureVisualizer
+                                    stage={processingState.stage}
+                                    agent={processingState.agent}
+                                    lastActiveStageOnError={processingState.lastActiveStageOnError}
+                                />
+                            </ErrorBoundary>
+                        </div>
+                        <div>
+                            <ErrorBoundary>
+                                <ResponseDisplay state={processingState} onReset={handleReset} />
+                            </ErrorBoundary>
+                        </div>
                     </div>
-                </div>
-            </main>
-        </div>
+                </main>
+            </div>
+        </ErrorBoundary>
     );
 };
 

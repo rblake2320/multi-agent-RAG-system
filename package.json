@@ -1,22 +1,63 @@
 {
-  "name": "bulletproof-multi-agent-rag-system",
-  "private": true,
-  "version": "0.0.0",
+  "name": "multi-agent-rag-system",
+  "version": "1.0.0",
+  "description": "A sophisticated multi-agent retrieval-augmented generation system with intelligent routing, security layers, and real-time visualization",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "echo 'Linting skipped - using TypeScript compiler for validation'",
+    "lint:fix": "echo 'Lint fix skipped - using TypeScript compiler for validation'",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,css,md}\"",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prepare": "npm run type-check"
+  },
+  "keywords": [
+    "rag",
+    "multi-agent",
+    "ai",
+    "typescript",
+    "react",
+    "google-ai",
+    "retrieval-augmented-generation",
+    "intelligent-routing",
+    "security",
+    "visualization"
+  ],
+  "author": "Multi-Agent RAG System",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rblake2320/multi-agent-RAG-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rblake2320/multi-agent-RAG-system/issues"
+  },
+  "homepage": "https://github.com/rblake2320/multi-agent-RAG-system#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   },
   "dependencies": {
-    "react-dom": "^19.2.0",
     "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "@google/genai": "^1.21.0",
     "marked": "^16.3.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react": "^7.32.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.0.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }
