@@ -1,0 +1,5 @@
+{
+  "name": "Bulletproof Multi-Agent RAG System",
+  "description": "A user interface to visualize and interact with a production-grade, specialized multi-agent RAG system. It demonstrates the four-layer defense architecture for routing queries to domain-specific agents and synthesizing validated responses.",
+  "requestFramePermissions": []
+}
