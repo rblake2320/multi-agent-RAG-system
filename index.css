@@ -29,7 +29,13 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
   line-height: 1.6;
   color: var(--color-content-100);
   background-color: var(--color-base-100);
@@ -38,32 +44,62 @@ body {
 }
 
 /* Utility Classes */
-.bg-base-100 { background-color: var(--color-base-100); }
-.bg-base-200 { background-color: var(--color-base-200); }
-.bg-base-300 { background-color: var(--color-base-300); }
+.bg-base-100 {
+  background-color: var(--color-base-100);
+}
+.bg-base-200 {
+  background-color: var(--color-base-200);
+}
+.bg-base-300 {
+  background-color: var(--color-base-300);
+}
 
-.text-content-100 { color: var(--color-content-100); }
-.text-content-200 { color: var(--color-content-200); }
-.text-content-300 { color: var(--color-content-300); }
+.text-content-100 {
+  color: var(--color-content-100);
+}
+.text-content-200 {
+  color: var(--color-content-200);
+}
+.text-content-300 {
+  color: var(--color-content-300);
+}
 
-.text-brand-primary { color: var(--color-brand-primary); }
-.bg-brand-primary { background-color: var(--color-brand-primary); }
+.text-brand-primary {
+  color: var(--color-brand-primary);
+}
+.bg-brand-primary {
+  background-color: var(--color-brand-primary);
+}
 
-.border-base-300 { border-color: var(--color-base-300); }
+.border-base-300 {
+  border-color: var(--color-base-300);
+}
 
 /* Animations */
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes pulse-fast {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 @keyframes ping {
-  75%, 100% {
+  75%,
+  100% {
     transform: scale(2);
     opacity: 0;
   }
@@ -141,12 +177,7 @@ textarea:focus-visible {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(59, 130, 246, 0.2),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
   animation: loading-shimmer 1.5s infinite;
 }
 

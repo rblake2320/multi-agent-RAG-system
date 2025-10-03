@@ -14,17 +14,20 @@ Thank you for your interest in contributing to the Multi-Agent RAG System! This 
 
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/multi-agent-RAG-system.git
    cd multi-agent-RAG-system
    ```
 
 3. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 4. **Set up environment variables**:
+
    ```bash
    cp .env.local.example .env.local
    # Add your GEMINI_API_KEY to .env.local
@@ -42,17 +45,20 @@ Thank you for your interest in contributing to the Multi-Agent RAG System! This 
 We maintain high code quality standards. Before submitting any changes:
 
 1. **Run linting**:
+
    ```bash
    npm run lint
    npm run lint:fix  # Auto-fix issues
    ```
 
 2. **Format code**:
+
    ```bash
    npm run format
    ```
 
 3. **Type checking**:
+
    ```bash
    npm run type-check
    ```
@@ -98,6 +104,7 @@ type(scope): description
 ```
 
 **Types:**
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -107,6 +114,7 @@ type(scope): description
 - `chore`: Build process or auxiliary tool changes
 
 **Examples:**
+
 ```bash
 feat(routing): add intelligent agent selection logic
 fix(security): resolve PII detection false positives
