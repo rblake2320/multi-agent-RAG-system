@@ -7,7 +7,7 @@
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Google AI](https://img.shields.io/badge/Google%20AI-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
 
-*A sophisticated multi-agent retrieval-augmented generation system with intelligent routing, security layers, and real-time visualization*
+_A sophisticated multi-agent retrieval-augmented generation system with intelligent routing, security layers, and real-time visualization_
 
 [View Live Demo](https://ai.studio/apps/drive/19p_px_-OJOzFGj1N9pwWK2idw_dxY5Ik) • [Report Bug](../../issues) • [Request Feature](../../issues)
 
@@ -53,23 +53,27 @@ graph TD
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/rblake2320/multi-agent-RAG-system.git
    cd multi-agent-RAG-system
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Configure environment**
+
    ```bash
    cp .env.local.example .env.local
    # Edit .env.local and add your GEMINI_API_KEY
    ```
 
 4. **Start development server**
+
    ```bash
    npm run dev
    ```
@@ -135,6 +139,7 @@ multi-agent-RAG-system/
 ### Security Features
 
 The system automatically:
+
 - Detects and blocks potential PII (emails, phone numbers)
 - Prevents prompt injection attacks
 - Implements rate limiting
@@ -170,6 +175,7 @@ The built files will be in the `dist/` directory, ready for deployment to any st
 ### Environment Setup
 
 Ensure your production environment has:
+
 - `GEMINI_API_KEY` environment variable set
 - Node.js 18+ for server-side rendering (if needed)
 
